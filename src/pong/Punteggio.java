@@ -33,9 +33,13 @@ public class Punteggio {
      * Promette: una partita 0 a 0, non finita, senza vincitore e con la storia vuota.
      */
     public Punteggio(int puntiPerVincere, int scartoMinimo) {
-        this.puntiPerVincere = puntiPerVincere;
-        this.scartoMinimo = scartoMinimo;
+    if (puntiPerVincere < 1 || scartoMinimo < 1) {
+        throw new IllegalArgumentException();
     }
+
+    this.puntiPerVincere = puntiPerVincere;
+    this.scartoMinimo = scartoMinimo;
+}
 
     /**
      * Il lato chi ha fatto un punto.
@@ -46,7 +50,11 @@ public class Punteggio {
      *           Se la partita era già finita, non cambia niente.
      */
     public void segnaPunto(Lato chi) {
-        if(!isFinita()){
+    if (chi == null) {
+        throw new IllegalArgumentException();
+    }
+
+    if (!isFinita()) {
             if(chi == Lato.DESTRA){
                 puntiDestra++;
                 storia.add(chi);
@@ -63,6 +71,9 @@ public class Punteggio {
      * Promette: i punti del lato chi. Non cambia niente.
      */
     public int getPunti(Lato chi) {
+        if (chi == null) {
+            throw new IllegalArgumentException();
+        }
         if(Lato.DESTRA == chi)
             return puntiDestra;
         if(Lato.SINISTRA == chi)
@@ -143,4 +154,33 @@ public class Punteggio {
         puntiSinistra = 0;
         storia.clear();
     }
+   public boolean repOK() {
+    if (puntiPerVincere < 1 || scartoMinimo < 1) {
+        return false;
+    }
+
+    if (puntiDestra < 0 || puntiSinistra < 0) {
+        return false;
+    }
+
+    if (storia == null) {
+        return false;
+    }
+
+    int destra = 0;
+    int sinistra = 0;
+
+    for (Lato lato : storia) {
+        if (lato == Lato.DESTRA) {
+            destra++;
+        } else if (lato == Lato.SINISTRA) {
+            sinistra++;
+        } else {
+            return false;
+        }
+    }
+
+    return destra == puntiDestra && sinistra == puntiSinistra;
 }
+}
+
